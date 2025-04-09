@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Whitelist Checker</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+</head>
+<body style="font-family:sans-serif;text-align:center;padding:20px">
+  <h2>Wallet Whitelist Checker</h2>
+  <input id="wallet" placeholder="Enter Wallet Address" style="padding:10px;width:80%">
+  <button onclick="check()" style="padding:10px 20px;margin-top:10px">Check</button>
+  <p id="result" style="margin-top:20px;font-weight:bold;"></p>
+
+<script>
+const sheetId = "1P9Ncv1En0FDhtGBU_2DyzzWFQmjb2z1YQ4UKfbPfcDQ";
+const sheetName = "Whitelist";
+const base = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?sheet=${sheetName}`;
+let data = [];
+
+fetch(base)
+  .then(res => res.text())
+  .then(rep => {
+    const json = JSON.parse(rep.substr(47).slice(0, -2));
+    const rows = json.table.rows;
+    data = rows.map(r => r.c[0].v.toLowerCase());
+  });
+
+function check() {
+  const addr = document.getElementById("wallet").value.trim().toLowerCase();
+  const result = document.getElementById("result");
+  if (!addr) return result.innerText = "Please enter wallet address";
+  result.innerText = data.includes(addr) ? "✅ Wallet is Whitelisted!" : "❌ Not Whitelisted.";
+}
+</script>
+</body>
+</html>
